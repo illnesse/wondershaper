@@ -132,6 +132,7 @@ fi;
 
 tc qdisc add dev "$IFACE" root handle 1: htb default 20;
 
+
 # shape everything at $USPEED speed - this prevents huge queues in your
 # DSL modem which destroy latency:
 # main class
@@ -195,21 +196,25 @@ if [[ -n "$USPEED" ]]; then
 
   # some traffic however suffers a worse fate
   for a in "${NOPRIOPORTDST[@]}"; do
+    echo NOPRIOPORTDST $a
     tc filter add dev "$IFACE" parent 1: protocol ip prio 14 u32 \
       match ip dport "$a" 0xffff flowid 1:30;
   done;
 
   for a in "${NOPRIOPORTSRC[@]}"; do
+    echo NOPRIOPORTSRC $a
     tc filter add dev "$IFACE" parent 1: protocol ip prio 15 u32 \
       match ip sport "$a" 0xffff flowid 1:30;
   done;
 
   for a in "${NOPRIOHOSTSRC[@]}"; do
+    echo NOPRIOHOSTSRC $a
     tc filter add dev "$IFACE" parent 1: protocol ip prio 16 u32 \
       match ip src "$a" flowid 1:30;
   done;
 
   for a in "${NOPRIOHOSTDST[@]}"; do
+    echo NOPRIOHOSTDST $a
     tc filter add dev "$IFACE" parent 1: protocol ip prio 17 u32 \
       match ip dst "$a"flowid 1:30;
   done;
