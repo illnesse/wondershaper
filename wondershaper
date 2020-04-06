@@ -232,25 +232,25 @@ fi;
 # ISPs tend to have *huge* queues to make sure big downloads are fast
 #
 # attach ingress policer:
-if [[ -n "$DSPEED" ]]; then
-  # Add the IFB interface
-  modprobe ifb numifbs=1;
-  ip link set dev "$IFB" up;
-
-  # Redirect ingress (incoming) to egress ifb0
-  tc qdisc add dev "$IFACE" handle ffff: ingress
-  tc filter add dev "$IFACE" parent ffff: protocol ip u32 match u32 0 0 \
-      action mirred egress redirect dev "$IFB";
-
-  # Add class and rules for virtual
-  tc qdisc add dev "$IFB" root handle 2: htb;
-  tc class add dev "$IFB" parent 2: classid 2:1 htb rate "${DSPEED}kbit";
-
-  # Add filter to rule for IP address
-  tc filter add dev "$IFB" protocol ip parent 2: prio 1 u32 \
-    match ip src 0.0.0.0/0 flowid 2:1;
-
-fi;
+#if [[ -n "$DSPEED" ]]; then
+#  # Add the IFB interface
+#  modprobe ifb numifbs=1;
+#  ip link set dev "$IFB" up;
+#
+#  # Redirect ingress (incoming) to egress ifb0
+#  tc qdisc add dev "$IFACE" handle ffff: ingress
+#  tc filter add dev "$IFACE" parent ffff: protocol ip u32 match u32 0 0 \
+#      action mirred egress redirect dev "$IFB";
+#
+#  # Add class and rules for virtual
+#  tc qdisc add dev "$IFB" root handle 2: htb;
+#  tc class add dev "$IFB" parent 2: classid 2:1 htb rate "${DSPEED}kbit";
+#
+#  # Add filter to rule for IP address
+#  tc filter add dev "$IFB" protocol ip parent 2: prio 1 u32 \
+#    match ip src 0.0.0.0/0 flowid 2:1;
+#
+#fi;
 
 ### EOF
 ### vim:tw=80:et:sts=2:st=2:sw=2:com+=b\:###:fo+=cqtrw:tags=tags:
